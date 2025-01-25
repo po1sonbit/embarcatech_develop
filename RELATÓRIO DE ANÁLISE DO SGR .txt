@@ -1,0 +1,8 @@
+RELATÓRIO DE ANÁLISE DO SISTEMA DE GESTÃO DE RESÍDUOS DE ZENITHIA (SGR)
+
+Há um erro encontrado no código do SGR. O código não possui um laço de repetição contínua, por conta disso, o código executa apenas uma vez. Como a verificação do lixo nos locais necessita ser constante, a solução é adicionar um While(1) para que o Sistema nunca pare de executar enquanto estiver ligado.
+
+Após a inserção do loop infinito, o código deve executar constantemente e com bastante velocidade, sendo possível a verificação em Tempo Real.
+
+Sugestão para a próxima versão do Sistema:
+Como o lixo é depositado com um determinado intervalo de tempo, talvez não seja necessário que o sistema funcione de maneira tão rápida, economizando assim energia da possível bateria do Sistema. A sugestão é colocar um delay no fim do loop, para que o sistema só analisa dentro de determinados intervalos de tempo mais intervalados, como por exemplo de 10 em 10 minutos.
