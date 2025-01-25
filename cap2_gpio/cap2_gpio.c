@@ -7,8 +7,8 @@
 //Descomente apenas a opção de codigo de interesse
 /*-----------------------------------------------------*/
 // #define EXAMPLE1     //LED e botao
-// #define EXAMPLE2     //LED RGB e dois botoes
-#define EXAMPLE3     //Teclado matricial
+#define EXAMPLE2     //LED RGB e dois botoes
+// #define EXAMPLE3     //Teclado matricial
 /*-----------------------------------------------------*/
 
 #ifdef EXAMPLE1
@@ -90,6 +90,7 @@ int main() {
     #endif
 }
 
+#ifdef  EXAMPLE3
 char read_keypad(uint8_t* colums, uint8_t* rows) {
     for(int i = 0; i < 4; i++) {
         gpio_put(rows[i], LOW);
@@ -106,6 +107,7 @@ char read_keypad(uint8_t* colums, uint8_t* rows) {
     }
     return 0;
 }
+#endif
 
 void verify_buttons(uint8_t _buttonA, uint8_t _buttonB, uint8_t* _led_status1, uint8_t* _led_status2, uint8_t* _led_status3) {
     if((!gpio_get(_buttonA)) && (gpio_get(_buttonB))) {

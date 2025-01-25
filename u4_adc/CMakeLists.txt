@@ -28,35 +28,35 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(gpio_button C CXX ASM)
+project(u4_adc C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(gpio_button gpio_button.c )
+add_executable(u4_adc u4_adc.c )
 
-pico_set_program_name(gpio_button "gpio_button")
-pico_set_program_version(gpio_button "0.1")
+pico_set_program_name(u4_adc "u4_adc")
+pico_set_program_version(u4_adc "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(gpio_button 0)
-pico_enable_stdio_usb(gpio_button 1)
+pico_enable_stdio_uart(u4_adc 0)
+pico_enable_stdio_usb(u4_adc 1)
 
 # Add the standard library to the build
-target_link_libraries(gpio_button
-        pico_stdlib)
+target_link_libraries(u4_adc
+        pico_stdlib hardware_adc)
 
 # Add the standard include files to the build
-target_include_directories(gpio_button PRIVATE
+target_include_directories(u4_adc PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Add any user requested libraries
-target_link_libraries(gpio_button 
-        pico_cyw43_arch_none
+target_link_libraries(u4_adc 
+        
         )
 
-pico_add_extra_outputs(gpio_button)
+pico_add_extra_outputs(u4_adc)
 
