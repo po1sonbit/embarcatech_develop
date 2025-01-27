@@ -23,51 +23,54 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD pico_w CACHE STRING "Board type")
+set(PICO_BOARD pico CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(final_project C CXX ASM)
+project(final_project_transmissor C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+add_subdirectory(inc/dht)
+
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(final_project 
-    final_project.c
-    inc/Lora/lora_sx1280.c
-    inc/SSD1306/ssd1306.c
-    inc/SX1280/Settings.h
-    inc/SX1280/SX1280_Def.h
-    inc/SX1280/SX1280.h
-    inc/SX1280/SX1280.c
-)
+add_executable(final_project_transmissor 
+            final_project_transmissor.c
+            inc/Lora/lora_sx1280.h
+            inc/Lora/lora_sx1280.c
+            inc/SX1280/Settings.h
+            inc/SX1280/SX1280_Def.h
+            inc/SX1280/SX1280.h
+            inc/SX1280/SX1280.c 
+            )
 
-pico_set_program_name(final_project "final_project")
-pico_set_program_version(final_project "0.1")
+pico_set_program_name(final_project_transmissor "final_project_transmissor")
+pico_set_program_version(final_project_transmissor "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(final_project 0)
-pico_enable_stdio_usb(final_project 1)
+pico_enable_stdio_uart(final_project_transmissor 0)
+pico_enable_stdio_usb(final_project_transmissor 1)
 
 # Add the standard library to the build
-target_link_libraries(final_project
-        pico_stdlib)
+target_link_libraries(final_project_transmissor
+        pico_stdlib
+        dht)
 
 # Add the standard include files to the build
-target_include_directories(final_project PRIVATE
+target_include_directories(final_project_transmissor PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Add any user requested libraries
-target_link_libraries(final_project 
-        hardware_spi
+target_link_libraries(final_project_transmissor 
         hardware_i2c
         hardware_timer
         hardware_adc
+        hardware_spi
         )
 
-pico_add_extra_outputs(final_project)
+pico_add_extra_outputs(final_project_transmissor)
 
