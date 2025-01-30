@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(final_project 
     final_project.c
     inc/Lora/lora_sx1280.c
+    inc/Mqtt_Wifi/mqtt_wifi.c
     inc/SSD1306/ssd1306.c
     inc/SX1280/Settings.h
     inc/SX1280/SX1280_Def.h
@@ -59,6 +60,7 @@ target_link_libraries(final_project
 # Add the standard include files to the build
 target_include_directories(final_project PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/inc
 )
 
 # Add any user requested libraries
@@ -67,6 +69,9 @@ target_link_libraries(final_project
         hardware_i2c
         hardware_timer
         hardware_adc
+        pico_multicore
+        pico_cyw43_arch_lwip_threadsafe_background
+        pico_lwip_mqtt
         )
 
 pico_add_extra_outputs(final_project)

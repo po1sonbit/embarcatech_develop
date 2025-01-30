@@ -96,6 +96,8 @@
         "cfenv": "c",
         "cinttypes": "c",
         "typeinfo": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "cyw43_arch.h": "c",
+        "ip_addr.h": "c"
     }
 }
