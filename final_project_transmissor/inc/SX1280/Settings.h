@@ -28,7 +28,7 @@
 #define DIO1 4 //4
 #define DIO2 -1                 //not used 
 #define DIO3 -1                 //not used
-#define RX_EN 27    //27            //pin for RX enable, used on some SX1280 devices, set to -1 if not used
+#define RX_EN -1    //27            //pin for RX enable, used on some SX1280 devices, set to -1 if not used
 #define TX_EN 1               //pin for TX enable, used on some SX1280 devices, set to -1 if not used                        
 #define BUZZER -1               //connect a buzzer here if wanted        
 

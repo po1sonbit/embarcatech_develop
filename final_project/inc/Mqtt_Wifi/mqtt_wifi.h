@@ -15,11 +15,8 @@
 #define WIFI_OK                 0
 #define WIFI_TIMEOUT            10000
 
-#define MQTT_BROKER_HOSTNAME    "broker.hivemq.com"
+#define MQTT_BROKER_HOSTNAME    "test.mosquitto.org"//"broker.hivemq.com"
 #define MQTT_BROKER_PORT        1883
-
-#define PIN_LED_BLUE            12
-#define PIN_LED_GREEN           11
 
 #define TOPIC_TEMP              "bitdog/temp"
 #define TOPIC_SOIL              "bitdog/soil"
@@ -28,6 +25,7 @@
 extern mqtt_client_t *global_mqtt_client;
 
 uint8_t start_Wifi(void);
+void stop_Wifi(void);
 void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status);
 void start_MQTT(void);
 

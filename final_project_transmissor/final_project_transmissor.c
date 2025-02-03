@@ -8,6 +8,8 @@
 #include <dht.h>
 
 #define SENSOR_ERROR            255
+#define DEBUG
+#define TIMER_FREQUENCY_MS      3000
 
 #define PIN_RAIN                26
 #define PIN_SOIL                27
@@ -18,7 +20,6 @@
 
 #define ADC_CHANNEL_RAIN        0
 #define ADC_CHANNEL_SOIL        2
-#define DELAY_READINGS          1000
 
 static const dht_model_t DHT_MODEL = DHT11;
 
@@ -28,14 +29,13 @@ uint8_t percent_rain = 0;
 uint8_t percent_humidity_soil = 0;
 float temperature = 0;
 float humidity = 0;
-uint8_t state_Lora = 0;
 
 dht_t DHT;
 
 uint8_t read_rain(void);
 uint8_t read_soil_humidity(void);
 
-
+uint8_t read_sensors_transmit(struct repeating_timer *t);
 
 int main()
 {
@@ -47,15 +47,18 @@ int main()
 
     dht_init(&DHT, DHT_MODEL, PIO, PIN_DHT, INTERNAL_PULL_UP_DHT);
 
-    state_Lora = init_Lora();
-    add_alarm_in_ms(3000, read_sensors_transmit, NULL, true);
+    init_Lora();
+
+    struct repeating_timer handle_timer;
+    add_repeating_timer_ms(TIMER_FREQUENCY_MS, read_sensors_transmit, NULL, &handle_timer);
+    
 
     while (true) {
         sleep_ms(1);
     }
 }
 
-int64_t read_sensors_transmit(alarm_id_t id, void *user_data) {
+uint8_t read_sensors_transmit(struct repeating_timer *t) {
     percent_humidity_soil = read_soil_humidity();
     if(percent_humidity_soil != SENSOR_ERROR) {
         printf("Humidity Soil percentage: %d %%\n", percent_humidity_soil);
@@ -81,7 +84,7 @@ int64_t read_sensors_transmit(alarm_id_t id, void *user_data) {
         printf("Bad checksum\n");
     }
     lora_tx(temperature, percent_humidity_soil, percent_rain);
-    return 0;
+    return 1;
 }
 
 uint8_t read_rain(void) {

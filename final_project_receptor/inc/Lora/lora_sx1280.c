@@ -29,7 +29,7 @@ uint8_t init_Lora(void) {
     return state;
 }
 
-void lora_rx(void) {
+uint8_t lora_rx(void) {
     uint8_t temp_int = 0;
     uint8_t temp_dec = 0;
     if (SX1280_checkIrqs()) {
@@ -65,5 +65,7 @@ void lora_rx(void) {
         }
         printf("\n");
         printf("RSSI: %d\n", rssi);
+        return PACK_RECEIVED;
     }
+    return PACK_NOT_RECEIVED;
 }
