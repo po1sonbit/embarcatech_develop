@@ -28,6 +28,8 @@ void lora_tx(float temperature, uint8_t humidity_percent, uint8_t rain_percent) 
     SX1280_writeUint8(temp_int, 2);
     SX1280_writeUint8(temp_dec, 3);
 
+    printf("TXReady: %d\n", SX1280_isTXReady());
+
     SX1280_startWriteSXBuffer(0);
     SX1280_writeSXBuffer(SIZE_PACKET);
     SX1280_endWriteSXBuffer();

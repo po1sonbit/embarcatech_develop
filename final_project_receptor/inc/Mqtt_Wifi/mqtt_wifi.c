@@ -1,22 +1,14 @@
 #include "mqtt_wifi.h"
 
 #include "inc/SX1280/Settings.h"
+#include "inc/SX1280/SX1280.h"
+#include "hardware/watchdog.h"
 
 mqtt_client_t *global_mqtt_client = NULL;
 
 static void stop_MQTT(void);
 
 uint8_t start_Wifi(void) {
-    // gpio_init(PIN_LED_BLUE);
-    // gpio_set_dir(PIN_LED_BLUE, GPIO_OUT);
-    // gpio_pull_up(PIN_LED_BLUE);
-
-    // gpio_put(NSS, 1);
-
-    // if (cyw43_arch_init()) {
-    //     printf("Failed to start WiFi\n");
-    //     return WIFI_ERROR;
-    // }
     while(cyw43_arch_init()) {
         printf("Failed to start WiFi, trying connect again...\n");
     }
@@ -24,42 +16,38 @@ uint8_t start_Wifi(void) {
     cyw43_arch_enable_sta_mode();
     printf("Trying to connect WiFi in STA...\n");
 
-    // if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, WIFI_TIMEOUT)) {
-    //     printf("Timeout: Failed to connect WiFi\n");
-    //     return WIFI_ERROR;
-    // }
     while(cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, WIFI_TIMEOUT)) {
+        watchdog_update();
         printf("Timeout: Failed to connect WiFi, trying again...\n");
     }
-    // else {
-        printf("WiFi Connected!\n");
-        // gpio_put(PIN_LED_BLUE, HIGH);
-        // sleep_ms(500);
-        // gpio_put(PIN_LED_BLUE, LOW);
+    printf("WiFi Connected!\n");
+    gpio_put(PIN_LED_GREEN, HIGH);
+    gpio_put(PIN_LED_RED, HIGH);
+    gpio_put(PIN_LED_BLUE, HIGH);
+    sleep_ms(500);
+    gpio_put(PIN_LED_GREEN, LOW);
+    gpio_put(PIN_LED_RED, LOW);
+    gpio_put(PIN_LED_BLUE, LOW);
 
-    // }
     return WIFI_OK;
 }
 
 void stop_Wifi(void) {
     stop_MQTT();
     printf("Disabling WiFi...\n");
+    cyw43_wifi_leave(&cyw43_state, CYW43_ITF_STA);
+    netif_set_down(netif_default);
     cyw43_arch_deinit();  // Desativa completamente o Wi-Fi
-    // gpio_put(NSS, 0);
     sleep_ms(500);
     printf("WiFi Disabled!\n");
 }
 
 void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status) {
-    // gpio_init(PIN_LED_GREEN);
-    // gpio_set_dir(PIN_LED_GREEN, GPIO_OUT);
-    // gpio_pull_up(PIN_LED_GREEN);
-
     if (status == MQTT_CONNECT_ACCEPTED) {
         printf("Connection MQTT Success!\n");
-        // gpio_put(PIN_LED_GREEN, HIGH);
-        // sleep_ms(500);
-        // gpio_put(PIN_LED_GREEN, LOW);
+        gpio_put(PIN_LED_GREEN, HIGH);
+        sleep_ms(500);
+        gpio_put(PIN_LED_GREEN, LOW);
     } else {
         printf("Connection MQTT Failure: %d\n", status);
     }
@@ -69,22 +57,20 @@ void mqtt_dns_found_cb(const char *name, const ip_addr_t *ipaddr, void *arg) {
     if (ipaddr) {
         printf("MQTT Broker IP: %s\n", ipaddr_ntoa(ipaddr));
 
-        sleep_ms(500);
-
         struct mqtt_connect_client_info_t ci = {
             .client_id = "bitdoglab_client",
             .client_user = NULL,
             .client_pass = NULL,
             .keep_alive = 60
         };
-
-        while(mqtt_client_connect(global_mqtt_client, ipaddr, MQTT_BROKER_PORT, mqtt_connection_cb, NULL, &ci) != ERR_OK) {
-            printf("MQTT connect failed, trying again...\n");
+        watchdog_update();
+        cyw43_arch_lwip_begin();
+        err_t err = mqtt_client_connect(global_mqtt_client, ipaddr, MQTT_BROKER_PORT, mqtt_connection_cb, NULL, &ci);
+        cyw43_arch_lwip_end();
+        sleep_ms(4000);
+        if (err != ERR_OK) {
+            printf("MQTT connect failed: %d\n", err);
         }
-        // err_t err = mqtt_client_connect(global_mqtt_client, ipaddr, MQTT_BROKER_PORT, mqtt_connection_cb, NULL, &ci);
-        // if (err != ERR_OK) {
-        //     printf("MQTT connect failed: %d\n", err);
-        // }
     } else {
         printf("DNS resolve failed for %s\n", name);
     }
@@ -98,7 +84,6 @@ void start_MQTT(void) {
     }
 
     ip_addr_t mqtt_ip_address;
-    // IP4_ADDR(&mqtt_ip_address, 192, 168, 1, 200);
     err_t err = dns_gethostbyname(MQTT_BROKER_HOSTNAME, &mqtt_ip_address, mqtt_dns_found_cb, NULL);
 
     if (err == ERR_OK) {

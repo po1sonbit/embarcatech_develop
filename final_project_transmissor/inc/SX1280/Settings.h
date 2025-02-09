@@ -13,7 +13,7 @@
 //DIO3, BUZZER may not be in used by this sketch so they do not need to be
 //connected and should be included and be set to -1.
 #define PIN_MISO 16
-#define PIN_CS   -1
+#define PIN_CS   17
 #define PIN_SCK  18
 #define PIN_MOSI 19
 
@@ -21,7 +21,7 @@
 
 // Copyright of the author Stuart Robinson
 
-#define NSS 17 //26
+// #define NSS 17 //26
 #define RFBUSY 8 //2
 #define NRESET 9 //0
 #define LED1 25 //25

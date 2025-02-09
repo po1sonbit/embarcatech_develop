@@ -16,8 +16,10 @@
 #define MEM_LIBC_MALLOC             1
 #else
 // MEM_LIBC_MALLOC is incompatible with non polling versions
+
 #define MEMP_NUM_SYS_TIMEOUT 20
 #define MEMP_NUM_TCP_PCB 10
+
 #define MEM_LIBC_MALLOC             0
 #endif
 #define MEM_ALIGNMENT               4

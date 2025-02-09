@@ -28,51 +28,46 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(final_project C CXX ASM)
+project(test_mqtt C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(final_project 
-    final_project.c
-    inc/Lora/lora_sx1280.c
-    inc/Mqtt_Wifi/mqtt_wifi.c
-    inc/SSD1306/ssd1306.c
-    inc/SX1280/Settings.h
-    inc/SX1280/SX1280_Def.h
-    inc/SX1280/SX1280.h
-    inc/SX1280/SX1280.c
-)
+add_executable(test_mqtt 
+                test_mqtt.c
+                inc/Lora/lora_sx1280.c
+                inc/Mqtt_Wifi/mqtt_wifi.c
+                inc/SX1280/Settings.h
+                inc/SX1280/SX1280_Def.h
+                inc/SX1280/SX1280.h
+                inc/SX1280/SX1280.c
+                 )
 
-pico_set_program_name(final_project "final_project")
-pico_set_program_version(final_project "0.1")
+pico_set_program_name(test_mqtt "test_mqtt")
+pico_set_program_version(test_mqtt "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(final_project 0)
-pico_enable_stdio_usb(final_project 1)
+pico_enable_stdio_uart(test_mqtt 0)
+pico_enable_stdio_usb(test_mqtt 1)
 
 # Add the standard library to the build
-target_link_libraries(final_project
+target_link_libraries(test_mqtt
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(final_project PRIVATE
+target_include_directories(test_mqtt PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_CURRENT_LIST_DIR}/inc
 )
 
 # Add any user requested libraries
-target_link_libraries(final_project 
+target_link_libraries(test_mqtt 
         hardware_spi
-        hardware_i2c
-        hardware_timer
-        hardware_adc
-        pico_multicore
         pico_cyw43_arch_lwip_threadsafe_background
         pico_lwip_mqtt
         )
 
-pico_add_extra_outputs(final_project)
+pico_add_extra_outputs(test_mqtt)
 

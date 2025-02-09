@@ -16,14 +16,12 @@ uint8_t SX1280_begin() {
 
     rxtxpinmode = false;
 
-    gpio_init(NSS);
-    gpio_set_dir(NSS, GPIO_OUT);
-
-    gpio_put(NSS, true);
+    gpio_init(PIN_CS);
+    gpio_set_dir(PIN_CS, GPIO_OUT);
+    gpio_put(PIN_CS, true);
 
     gpio_init(NRESET);
     gpio_set_dir(NRESET, GPIO_OUT);
-
     gpio_put(NRESET, false);
 
     gpio_init(RFBUSY);
@@ -207,7 +205,7 @@ void SX1280_readRegisters(uint16_t address, uint8_t *buffer, uint16_t size)
     addr_l = address & 0x00FF;
     SX1280_checkBusy();
 
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
 
     uint8_t buf[4];
     buf[0] = RADIO_READ_REGISTER;
@@ -219,7 +217,7 @@ void SX1280_readRegisters(uint16_t address, uint8_t *buffer, uint16_t size)
     // sleep_ms(10);
     spi_read_blocking(SPI_PORT, 0, buffer, size);
 
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 }
 
 uint8_t SX1280_readRegister(uint16_t address)
@@ -239,7 +237,7 @@ void SX1280_writeRegisters(uint16_t address, uint8_t *buffer, uint16_t size)
     addr_h = address >> 8;
     SX1280_checkBusy();
 
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
 
     uint8_t buf[size + 3];
     buf[0] = RADIO_WRITE_REGISTER;
@@ -253,7 +251,7 @@ void SX1280_writeRegisters(uint16_t address, uint8_t *buffer, uint16_t size)
 
     spi_write_blocking(SPI_PORT, buf, size + 3);
 
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 }
 
 void SX1280_writeRegister(uint16_t address, uint8_t value)
@@ -306,9 +304,9 @@ void SX1280_setMode(uint8_t modeconfig)
     SX1280_checkBusy();
 
     uint8_t buf[] = {Opcode, modeconfig};
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
     spi_write_blocking(SPI_PORT, buf, 2);
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 }
 
 void SX1280_readCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
@@ -316,7 +314,7 @@ void SX1280_readCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
     uint8_t i;
     SX1280_checkBusy();
 
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
 
     uint8_t buf[2];
     buf[0] = Opcode;
@@ -326,7 +324,7 @@ void SX1280_readCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
 
     spi_read_blocking(SPI_PORT, 0, buffer, size);
 
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 }
 
 void SX1280_writeCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
@@ -334,7 +332,7 @@ void SX1280_writeCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
     uint8_t index;
     SX1280_checkBusy();
 
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
     uint8_t buf[size + 1];
     buf[0] = Opcode;
 
@@ -345,7 +343,7 @@ void SX1280_writeCommand(uint8_t Opcode, uint8_t *buffer, uint16_t size)
 
     spi_write_blocking(SPI_PORT, buf, size + 1);
 
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 
     if (Opcode != RADIO_SET_SLEEP)
     {
@@ -398,7 +396,7 @@ void SX1280_startReadSXBuffer(uint8_t ptr)
 
     SX1280_checkBusy();
 
-    gpio_put(NSS, false); // start the burst read
+    gpio_put(PIN_CS, false); // start the burst read
     spi_write_blocking(SPI_PORT, buf, 3);
 }
 
@@ -482,7 +480,7 @@ void SX1280_getSXBuffer(uint8_t *destination, uint8_t size)
 
 uint8_t SX1280_endReadSXBuffer()
 {
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
     return RXPacketL;
 }
 
@@ -501,7 +499,7 @@ void SX1280_startWriteSXBuffer(uint8_t ptr)
     buf[0] = RADIO_WRITE_BUFFER;
     buf[1] = ptr;
 
-    gpio_put(NSS, false);
+    gpio_put(PIN_CS, false);
     spi_write_blocking(SPI_PORT, buf, 2);
 }
 
@@ -512,7 +510,7 @@ void SX1280_writeSXBuffer(uint8_t size)
 
 void SX1280_endWriteSXBuffer()
 {
-    gpio_put(NSS, true);
+    gpio_put(PIN_CS, true);
 }
 
 void SX1280_transmitSXBuffer(uint8_t startaddr, uint8_t length, uint16_t timeout)

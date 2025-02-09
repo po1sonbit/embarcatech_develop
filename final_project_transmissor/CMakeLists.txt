@@ -70,6 +70,7 @@ target_link_libraries(final_project_transmissor
         hardware_timer
         hardware_adc
         hardware_spi
+        hardware_watchdog
         )
 
 pico_add_extra_outputs(final_project_transmissor)

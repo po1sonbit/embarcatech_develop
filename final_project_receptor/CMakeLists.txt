@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(final_project_receptor 
                 final_project_receptor.c
                 inc/Lora/lora_sx1280.c 
+                inc/Mqtt_Wifi/mqtt_wifi.c
                 inc/SSD1306/ssd1306.c
                 inc/SX1280/Settings.h
                 inc/SX1280/SX1280_Def.h
@@ -67,7 +68,9 @@ target_link_libraries(final_project_receptor
         hardware_spi
         hardware_i2c
         hardware_watchdog
-        
+        hardware_timer
+        pico_cyw43_arch_lwip_threadsafe_background
+        pico_lwip_mqtt
         )
 
 pico_add_extra_outputs(final_project_receptor)

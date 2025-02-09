@@ -11,6 +11,8 @@
 #define PACK_RECEIVED           0
 #define PACK_NOT_RECEIVED       1
 
+#define SENSOR_ERROR            255         // Macro de erro
+
 extern uint8_t humidity_percent;
 extern uint8_t rain_percent;
 extern float temperature;
